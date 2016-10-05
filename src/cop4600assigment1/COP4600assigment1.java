@@ -1,6 +1,6 @@
 // Cary McEwan, Brandon James, Hung Tran
 // COP 4600
-package cop4600assigment1;
+// package cop4600assigment1;
 
 /**
  *
@@ -239,8 +239,8 @@ class CpuScheduler {
         // For loop that executes for the total time the processor is supposed to run for
         for (int currentTime = 0; currentTime <= runFor ; currentTime++) {
             
-            // Checks each process in our processes HashSet to see if it is currently the process' arrival time. If so, add it to the queue
-            // and indicate that it has arrived.
+            // Checks each process in our processes HashSet to see if it is currently the process' arrival time. If so, add it to
+            // the arrivedProcesses set and indicate that it has arrived.
             for (Process p : processes) {
                 if (p.arrival == currentTime) {
                     arrivedProcesses.add(p);
@@ -248,8 +248,10 @@ class CpuScheduler {
                 }
             }
 
+            // If there are still Processes that need to run
             if (!arrivedProcesses.isEmpty()) {
-                            
+                // If the runningProcces has a burst of 0 meaning that it is finished
+                // Acknowledge that it has finished and remove it from the set of arrivedProcesses
                 if (runningProcess.burst == 0) {
                     if(runningProcess.name != "TEMP") {
                         bufferedWriter.write("Time "+currentTime+": "+runningProcess.name+" finished"+newLine);
@@ -258,6 +260,9 @@ class CpuScheduler {
                     }
                     currentlyRunning = false;
                 }
+                // Set minBurst to an extremely high number so it will always be overwritten
+                // Then find the Process with the minimum remaining burst. Make that process the current
+                // runningProcess
                 int minBurst = 1000000;
                 for (Process p : arrivedProcesses) {
                     if (p.burst < minBurst) {
@@ -265,13 +270,14 @@ class CpuScheduler {
                         runningProcess = p;
                     }
                 }
-//                if (!lastProcess.equals(runningProcess.name))
+//              // Update which Process is running
                 bufferedWriter.write("Time "+currentTime+": "+runningProcess.name+" selected (burst "+runningProcess.burst+")"+newLine);
 
-
+                // Decrease process remaining burstTime
                 runningProcess.burst--;
 //                lastProcess = runningProcess.name;
             }
+            // If no processes waiting to run and we are not at the end, scheduler is Idle
             else if (currentTime != runFor)
                 bufferedWriter.write("Time "+currentTime+": Idle"+newLine);
         }
